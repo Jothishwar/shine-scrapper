@@ -1,4 +1,5 @@
-import requests,json
+import requests,json,time
+from random import randint
 
 payload = {}
 headers = {
@@ -26,4 +27,23 @@ for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
         category_names.append(resp_json['data'][cat][0])
     # print(resp_json['data'][0][0])
 print('total categories - ',len(category_names))
-
+total=0
+for cat in category_names:
+    fetched=0
+    time.sleep(randint(10,15))
+    api_url = f"https://www.shine.com/api/v2/search/simple/?q={cat}&page=1&sort=1"
+    cresp = requests.request("GET", api_url, headers=headers, data=payload)
+    category_json=json.loads(cresp.text)
+    c=category_json['count']
+    print('available jobs - ',c)
+    total+=c
+    for page in range(1,category_json['num_pages']+1):
+        time.sleep(randint(2,5))
+        cat_api_url=f"https://www.shine.com/api/v2/search/simple/?q={cat}&page={page}&sort=1"
+        resp = requests.request("GET", cat_api_url, headers=headers, data=payload)
+        job_json=json.loads(resp.text)
+        n=len(job_json['results'])
+        fetched+=n
+    print('jobs fetched using api - ',fetched)
+print('Overall jobs fetched - ',total)
+print('Success !!!')
