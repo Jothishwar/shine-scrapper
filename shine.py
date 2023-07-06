@@ -42,8 +42,13 @@ for cat in category_names:
         cat_api_url=f"https://www.shine.com/api/v2/search/simple/?q={cat}&page={page}&sort=1"
         resp = requests.request("GET", cat_api_url, headers=headers, data=payload)
         job_json=json.loads(resp.text)
-        n=len(job_json['results'])
-        fetched+=n
+        try:
+            n=len(job_json['results'])
+            fetched+=n
+        except:
+            print('\nfailed to fetch page')
+            print('category - ',cat,'\t page number - ',page,'\n')
+            continue
     print('jobs fetched using api - ',fetched)
 print('Overall jobs fetched - ',total)
 print('Success !!!')
