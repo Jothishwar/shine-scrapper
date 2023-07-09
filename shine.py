@@ -112,24 +112,49 @@ def format_sal(sal):
     if sal==None:
         return None
     fsal=[]
-    matches=re.findall(r"\d+",sal)
+    if re.findall(r"\d+k", sal):
+        matches = re.findall(r"\d+(?:\.\d+)?", sal)
+        if len(matches)==1:
+            return str((int(matches[0])*12)/100)+' LPA'
+
+    matches = re.findall(r"\d+(?:\.\d+)?", sal.replace(',',''))
     if len(matches)>0:
         if len(matches)==1:
-            if int(matches[0])/1000>=1 and str(matches[0]).count('0')==3:
-                pass
-            fsal.append(int(matches[0]))
-            fsal.append(None)
+            try:
+                if int(matches[0])/1000>=1 and str(matches[0]).count('0')>=3:
+                    return str((int(matches[0])*12)/100000)+' LPA'
+                else:
+                    if str(matches[0]).count('0')>=4 and int(matches[0])/100000>=1:
+                        return str(int(matches[0])/100000)+' LPA'
+                    return str(int(matches[0]))+' LPA'
+            except:
+                if float(matches[0])/1000>=1 and str(matches[0]).count('0')>=3:
+                    return str((float(matches[0])/1000)*12)+' LPA'
+                else:
+                    if str(matches[0]).count('0')>=4 and float(matches[0])/100000>=1:
+                        return str(float(matches[0])/100000)+' LPA'
+                    return str(float(matches[0]))+' LPA'
         if len(matches) >= 2:
-            if(int(matches[0])!=int(matches[1])):
-                fsal.append(int(matches[0]))
-                fsal.append(int(matches[1]))
-            else:
-                fsal.append(int(matches[0]))
-                fsal.append(None)
+            try:
+                if int(matches[0])/100000>=1 and str(matches[0]).count('0')>=4:
+                        return str((int(matches[0]))/100000)+' - '+str((int(matches[1]))/100000)+' LPA'
+                if int(matches[0])/1000>=1 and str(matches[0]).count('0')>=3:
+                        return str((int(matches[0])*12)/100000)+' - '+str((int(matches[1])*12)/100000)+' LPA'
+                if(matches[0]!=matches[1]):
+                    fsal.append(matches[0])
+                    fsal.append(matches[1])
+            except:
+                if float(matches[0])/100000>=1 and str(matches[0]).count('0')>=4:
+                        return str((float(matches[0]))/100000)+' - '+str((float(matches[1]))/100000)+' LPA'
+                if float(matches[0])/1000>=1 and str(matches[0]).count('0')>=3:
+                        return str((float(matches[0])*12)/100000)+' - '+str((float(matches[1])*12)/100000)+' LPA'
+                if(matches[0]!=matches[1]):
+                    fsal.append(matches[0])
+                    fsal.append(matches[1])
     else:
-        fsal.append(None)
-        fsal.append(None)
-    return sal
+        return None
+    return str(fsal[0])+" - "+str(fsal[1])+' LPA'
+
 for cat in category_names:
     fetched=0
     job_list=[]
@@ -184,8 +209,7 @@ for cat in category_names:
                 job_resp=requests.get(link)
                 job_soup=BeautifulSoup(job_resp.content,'html.parser')
                 sal=get_sal(job_soup,desc)
-                print(sal)
-                fsal=format_sal(sal)
+                fsal=format_sal(str(sal))
                 try:
                     job_html=job_soup.select_one('script[type="application/ld+json"]')
                     job_json1=json.loads(job_html.text.strip())
