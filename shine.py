@@ -170,7 +170,7 @@ for cat in category_names:
     cur = conn.cursor()
     #-----------------Fetching existing job links to remove duplicates-------------------------------------
     try:
-        cur.execute("select url from jobs where url like '%timesjobs%' and category='"+str(c)+"'")
+        cur.execute("select url from jobs where url like '%shine%' and category='"+str(cat)+"'")
         rec=cur.fetchall()
         existing_links=list([j[0] for j in rec])
     except:
