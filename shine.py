@@ -216,9 +216,9 @@ for cat in category_names:
                 except Exception as e:
                     print('Failed to fetch json for emp type')
                     print(link,' - ',e)
-                ty=job_json1['employmentType']
+                ty=job_json1['employmentType'].title(1)
                 # print((titl,cat,loc,da,link,desc,sk,ty,cmp,minmax[0],minmax[1],qua,None,sal))
-                job_list.append((titl,cat,loc,da,link,desc,sk,ty,cmp,minmax[0],minmax[1],qua,None,sal))
+                job_list.append((titl,cat,loc,da,link,desc,sk,ty,cmp,minmax[0],minmax[1],qua,None,fsal))
         except Exception as e:
             print(e)
             print('\nfailed to fetch page')
