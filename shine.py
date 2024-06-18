@@ -6,12 +6,16 @@ import smtplib
 from email.message import EmailMessage
 import psycopg2
 from psycopg2.extras import execute_values
+from dotenv import load_dotenv
 
-USERNAME = "talentaijobsuser"
-PASSWORD = "jkrowlingtalentai12?"
-DB_NAME = "talentai_jobs_db"
-URL = "talentai-jobs-db.c95l3n9ofmp6.ap-south-1.rds.amazonaws.com"
-PORT = 5432
+load_dotenv()
+
+
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
+DB_NAME = os.getenv('DB')
+URL = os.getenv('DB_URL')
+PORT = os.getenv('DB_PORT')
 
 payload = {}
 headers = {
@@ -45,9 +49,9 @@ def send_email(subject,body):
     # Set up SMTP server details
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    sender_email = 'jothishwarvvr@gmail.com'  # Your email address
-    sender_password = 'nowfywvjxxwwfyux'  # Your email password
-    recipient_email = 'jothishwarvvr@gmail.com'  # Recipient's email address
+    sender_email = os.getenv('SENDER_EMAIL')
+    sender_password = os.getenv('SENDER_PASS')
+    recipient_email = os.getenv('RECIPIENT_EMAIL')
 
     # Create the email message
     message = EmailMessage()
